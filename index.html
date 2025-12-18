@@ -3,7 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#050505" id="theme-color-meta">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>My Digital Card</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link
@@ -346,25 +350,48 @@
         const icon = toggleBtn.querySelector('i');
         const body = document.body;
 
-        // Check for saved preference
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            body.setAttribute('data-theme', 'light');
-            icon.classList.remove('fa-sun');
-            icon.classList.add('fa-moon');
-        }
+        const themeMeta = document.getElementById('theme-color-meta');
 
-        toggleBtn.addEventListener('click', () => {
-            if (body.hasAttribute('data-theme')) {
-                body.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'dark');
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
+        // Function to apply theme
+        function applyTheme(theme) {
+            if (theme === 'light') {
                 body.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
                 icon.classList.remove('fa-sun');
                 icon.classList.add('fa-moon');
+                themeMeta.setAttribute('content', '#B0B0B0'); // Match Light Silver BG
+            } else {
+                body.removeAttribute('data-theme');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                themeMeta.setAttribute('content', '#050505'); // Match Dark BG
+            }
+        }
+
+        // Initialize: Check Local Storage -> Then System Preference
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+        if (savedTheme === 'light' || (!savedTheme && systemPrefersLight)) {
+            applyTheme('light');
+        } else {
+            applyTheme('dark');
+        }
+
+        // Toggle Event
+        toggleBtn.addEventListener('click', () => {
+            if (body.hasAttribute('data-theme')) {
+                applyTheme('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                applyTheme('light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Listen for system changes (only applies if user hasn't manually overridden)
+        window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+            if (!localStorage.getItem('theme')) {
+                applyTheme(e.matches ? 'light' : 'dark');
             }
         });
     </script>
