@@ -101,12 +101,14 @@
         }
 
         body {
-            min-height: 100vh;
-            min-height: 100dvh;
-            padding: 40px 18px;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            /* the link list scrolls instead of the page */
+            padding: 40px 18px 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             background: linear-gradient(158deg, var(--bg-1) 0%, var(--bg-2) 48%, var(--bg-3) 100%);
             color: var(--ink);
@@ -163,7 +165,16 @@
             z-index: 1;
             width: 100%;
             max-width: 424px;
+            height: 100%;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
             text-align: center;
+        }
+
+        /* ---------- Fixed hero ---------- */
+        .hero {
+            flex: none;
         }
 
         /* ---------- Theme toggle ---------- */
@@ -230,14 +241,27 @@
             letter-spacing: 0.04em;
             color: var(--accent);
             line-height: 1.75;
-            margin: 14px 0 32px;
+            margin: 14px 0;
         }
 
         /* ---------- Links ---------- */
         .links {
+            flex: 0 1 auto;
+            min-height: 0;
             display: flex;
             flex-direction: column;
             gap: 13px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            overscroll-behavior: contain;
+            /* let card shadows breathe inside the clipped scroller */
+            margin: 0 -18px;
+            padding: 18px 18px 28px;
+            /* soft fade at both ends so cards slide under the hero */
+            -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18px, #000 calc(100% - 28px), transparent);
+            mask-image: linear-gradient(to bottom, transparent, #000 18px, #000 calc(100% - 28px), transparent);
+            scrollbar-width: thin;
+            scrollbar-color: var(--go) transparent;
         }
 
         .social {
@@ -296,6 +320,8 @@
             font-weight: 600;
             font-size: 1.06rem;
             letter-spacing: 0.01em;
+            /* keep two lines of text shorter than the badge so every card shares its height */
+            line-height: 1.25;
         }
 
         .social .label small {
@@ -304,6 +330,7 @@
             font-size: 0.78rem;
             color: var(--ink-soft);
             letter-spacing: 0.02em;
+            line-height: 1.25;
             margin-top: 1px;
             overflow-wrap: anywhere;
         }
@@ -427,7 +454,7 @@
         }
 
         footer {
-            margin-top: 40px;
+            margin-top: 27px;
             font-size: 0.78rem;
             letter-spacing: 0.06em;
             color: var(--footer);
@@ -442,6 +469,28 @@
             .badge {
                 width: 38px;
                 height: 38px;
+            }
+        }
+
+        @media (max-height: 620px) {
+            body {
+                height: auto;
+                min-height: 100dvh;
+                overflow: visible;
+                overflow-x: hidden;
+                padding-bottom: 40px;
+            }
+
+            .wrap {
+                height: auto;
+            }
+
+            .links {
+                overflow: visible;
+                margin: 0;
+                padding: 18px 0 0;
+                -webkit-mask-image: none;
+                mask-image: none;
             }
         }
 
@@ -467,15 +516,17 @@
     </button>
 
     <main class="wrap">
-        <img src="Headshot.jpg" alt="Dr. Daniel Habtamu" class="avatar reveal" style="animation-delay: 0.05s">
+        <header class="hero">
+            <img src="Headshot.jpg" alt="Dr. Daniel Habtamu" class="avatar reveal" style="animation-delay: 0.05s">
 
-        <h1 class="name reveal" style="animation-delay: 0.13s">Dr. Daniel Habtamu</h1>
+            <h1 class="name reveal" style="animation-delay: 0.13s">Dr. Daniel Habtamu</h1>
 
-        <p class="roles reveal" style="animation-delay: 0.20s">
-            Medical Candidate<br>
-            Full Stack &amp; AI Engineer<br>
-            Co-founder of Club 5 to 7
-        </p>
+            <p class="roles reveal" style="animation-delay: 0.20s">
+                Medical Candidate<br>
+                Full Stack &amp; AI Engineer<br>
+                Co-founder of Club 5 to 7
+            </p>
+        </header>
 
         <div class="links">
             <a href="https://vcard.link/card/IfaC.vcf" class="social primary reveal" style="animation-delay: 0.34s">
@@ -543,9 +594,9 @@
                 <span class="label">Email Me<small>danielhabtamutsegaye@gmail.com</small></span>
                 <span class="go"><i class="fa-solid fa-arrow-right"></i></span>
             </a>
-        </div>
 
-        <footer class="reveal" style="animation-delay: 0.90s">&copy; 2026 Dr. Daniel Habtamu</footer>
+            <footer class="reveal" style="animation-delay: 0.90s">&copy; 2026 Dr. Daniel Habtamu</footer>
+        </div>
     </main>
 
     <script>
